@@ -37,25 +37,14 @@ GitHub Pages делает это сам).
 (DevTools → Application → Service Workers), остановить сервер и перезагрузить
 страницу — приложение должно подняться целиком.
 
-## Деплой на статику (GitHub Pages)
+## Где живёт
+
+**https://k41n.github.io/d4-personality/** — GitHub Pages, ветка `main`, корень
+репозитория. Обновление: `git push` в `main`, Pages пересобирается сам.
 
 Все пути относительные (`./`), `start_url` и `scope` — тоже, поэтому приложение
-работает и в корне домена, и в подкаталоге вида
-`https://<user>.github.io/<repo>/`.
-
-```sh
-git init && git add . && git commit -m "PWA 1d4"
-git branch -M main
-git remote add origin git@github.com:<user>/<repo>.git
-git push -u origin main
-```
-
-Затем в настройках репозитория: **Settings → Pages → Source: Deploy from a
-branch → `main` / `/ (root)`**. Через минуту приложение доступно по
-`https://<user>.github.io/<repo>/` и предлагает установку.
-
-Подойдёт любой другой статический хостинг (Netlify, Vercel, Cloudflare Pages,
-nginx) — деплой сводится к выкладке каталога как есть.
+одинаково работает и в подкаталоге Pages, и в корне любого другого статического
+хостинга.
 
 ### Обновление версии
 
@@ -65,15 +54,18 @@ nginx) — деплой сводится к выкладке каталога к
 
 ## Что проверено
 
-Локальный прогон на `http://127.0.0.1:8811/`:
+Прогон локально и на живом Pages-адресе:
 
-- **Lighthouse 11, категория PWA — 1.0.** Пройдены `installable-manifest`,
+- **Lighthouse 11, категория PWA — 1.0** (и локально, и на
+  `https://k41n.github.io/d4-personality/`). Пройдены `installable-manifest`,
   `splash-screen`, `themed-omnibox`, `maskable-icon`, `content-width`,
   `viewport`.
 - **Офлайн:** сервер остановлен, страница перезагружена — HTML, CSS, JS, иконки
   и манифест отданы из кеша `d4-lichnost-v1`, бросок работает.
 - **Состояние:** счётчики и последняя выпавшая грань переживают перезагрузку;
   «Сбросить счёт» чистит и `localStorage`.
+- **На проде:** SW зарегистрирован со scope `/d4-personality/`, в кеше 9
+  файлов, `start_url` и иконки резолвятся в подкаталог правильно.
 - **320px:** горизонтальной прокрутки нет, ничего не выходит за вьюпорт.
 - Консоль чистая: 0 ошибок, 0 предупреждений.
 

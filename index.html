@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Бросок 1d4</title>
+<meta name="description" content="Бросок 1d4: четыре личности на гранях тетраэдра.">
+<meta name="theme-color" content="#241E23">
+<meta name="color-scheme" content="dark light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="1d4">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<main class="card">
+  <div class="eyebrow"><span>Бросок</span><span>1d4</span></div>
+  <h1>Личность</h1>
+  <div class="rule"></div>
+
+  <svg class="net" viewBox="-3 -4 106 95" role="img" aria-label="Развёртка четырёхгранника с четырьмя личностями">
+    <g class="face" id="f1">
+      <polygon points="50,0 75,43.3 25,43.3"></polygon>
+      <text class="num" x="50" y="22">I</text>
+      <text class="name" x="50" y="31">Судья</text>
+    </g>
+    <g class="face" id="f2">
+      <polygon points="25,43.3 50,86.6 0,86.6"></polygon>
+      <text class="num" x="25" y="65.5">II</text>
+      <text class="name" x="25" y="74.5">Вдова</text>
+    </g>
+    <g class="face" id="f3">
+      <polygon points="75,43.3 100,86.6 50,86.6"></polygon>
+      <text class="num" x="75" y="65.5">III</text>
+      <text class="name" x="75" y="74.5">Мясник</text>
+    </g>
+    <g class="face" id="f4">
+      <polygon points="25,43.3 75,43.3 50,86.6"></polygon>
+      <text class="num" x="50" y="53">IV</text>
+      <text class="name" x="50" y="61.5">Кантор</text>
+    </g>
+  </svg>
+
+  <div class="result" aria-live="polite">
+    <span class="idle" id="idle">Грань ещё не выпала</span>
+    <span class="val" id="val" hidden></span>
+    <span class="who" id="who" hidden></span>
+  </div>
+
+  <button class="roll" id="roll">Бросить кость</button>
+
+  <section class="tally">
+    <div class="tally-row"><span>I &nbsp; Судья</span><b id="c1">0</b></div>
+    <div class="tally-row"><span>II &nbsp; Вдова</span><b id="c2">0</b></div>
+    <div class="tally-row"><span>III &nbsp; Мясник</span><b id="c3">0</b></div>
+    <div class="tally-row"><span>IV &nbsp; Кантор</span><b id="c4">0</b></div>
+    <div class="tally-foot">
+      <span>Бросков: <b id="total">0</b></span>
+      <button id="reset">Сбросить счёт</button>
+    </div>
+  </section>
+</main>
+
+<script src="./app.js"></script>
+</body>
+</html>

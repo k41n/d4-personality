@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бросок 1d4</title>
+<style>
+  :root{
+    --table:#241E23;
+    --paper:#CFD0C4;
+    --paper-deep:#BEC0B2;
+    --ink:#1F1A1E;
+    --ink-soft:#5F585C;
+    --blood:#74202C;
+    --brass:#8C7A3F;
+    --display:"Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --util:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--table);
+    color:var(--ink);
+    font-family:var(--display);
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:18px;
+  }
+  .card{
+    width:100%;max-width:430px;
+    background:var(--paper);
+    border:1px solid #0d0b0d;
+    box-shadow:0 20px 44px rgba(0,0,0,.6);
+    padding:24px 22px 18px;
+  }
+
+  .eyebrow{
+    font-family:var(--util);
+    font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  h1{
+    font-size:30px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;
+    margin:8px 0 0;
+  }
+  .rule{height:1px;background:var(--ink);opacity:.35;margin:14px 0 4px}
+
+  /* развёртка тетраэдра: четыре грани d4 */
+  .net{width:100%;height:auto;display:block;margin:6px 0 2px;overflow:visible}
+  .face polygon{fill:none;stroke:var(--ink);stroke-width:.55;transition:fill .12s linear}
+  .face text{fill:var(--ink);text-anchor:middle;font-family:var(--display)}
+  .face .name{font-size:6.2px;letter-spacing:.12em;text-transform:uppercase}
+  .face .num{font-size:4.4px;font-family:var(--util);fill:var(--ink-soft);letter-spacing:.1em}
+  .face.lit polygon{fill:rgba(31,26,30,.13)}
+  .face.locked polygon{fill:var(--blood);stroke:var(--blood)}
+  .face.locked .name{fill:var(--paper)}
+  .face.locked .num{fill:rgba(207,208,196,.75)}
+
+  .result{
+    min-height:58px;
+    display:flex;align-items:baseline;gap:12px;
+    padding-top:6px;
+  }
+  .result .val{
+    font-family:var(--util);font-size:13px;letter-spacing:.2em;
+    color:var(--ink-soft);white-space:nowrap;
+  }
+  .result .who{
+    font-size:26px;letter-spacing:.14em;text-transform:uppercase;color:var(--blood);
+  }
+  .result .idle{
+    font-size:14px;letter-spacing:.06em;color:var(--ink-soft);font-style:italic;
+  }
+
+  button.roll{
+    width:100%;
+    background:var(--blood);color:var(--paper);
+    border:none;border-radius:0;
+    padding:15px;margin-top:6px;
+    font-family:var(--util);font-size:12px;letter-spacing:.28em;text-transform:uppercase;
+    cursor:pointer;
+  }
+  button.roll:hover{background:#8a2734}
+  button.roll:disabled{opacity:.5;cursor:default}
+  button.roll:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+
+  .tally{margin-top:18px;border-top:1px solid rgba(31,26,30,.35);padding-top:10px}
+  .tally-row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-family:var(--util);font-size:12px;letter-spacing:.08em;
+    color:var(--ink-soft);padding:3px 0;
+  }
+  .tally-row b{font-weight:400;color:var(--ink)}
+  .tally-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:8px;font-family:var(--util);font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-soft);
+  }
+  .tally-foot button{
+    background:none;border:none;padding:0;cursor:pointer;
+    font:inherit;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;
+  }
+  .tally-foot button:hover{color:var(--blood)}
+  .tally-foot button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+  @media (prefers-reduced-motion:reduce){
+    .face polygon{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="eyebrow"><span>Бросок</span><span>1d4</span></div>
+  <h1>Личность</h1>
+  <div class="rule"></div>
+
+  <svg class="net" viewBox="-3 -4 106 95" role="img" aria-label="Развёртка четырёхгранника с четырьмя личностями">
+    <g class="face" id="f1">
+      <polygon points="50,0 75,43.3 25,43.3"></polygon>
+      <text class="num" x="50" y="22">I</text>
+      <text class="name" x="50" y="31">Судья</text>
+    </g>
+    <g class="face" id="f2">
+      <polygon points="25,43.3 50,86.6 0,86.6"></polygon>
+      <text class="num" x="25" y="65.5">II</text>
+      <text class="name" x="25" y="74.5">Вдова</text>
+    </g>
+    <g class="face" id="f3">
+      <polygon points="75,43.3 100,86.6 50,86.6"></polygon>
+      <text class="num" x="75" y="65.5">III</text>
+      <text class="name" x="75" y="74.5">Мясник</text>
+    </g>
+    <g class="face" id="f4">
+      <polygon points="25,43.3 75,43.3 50,86.6"></polygon>
+      <text class="num" x="50" y="53">IV</text>
+      <text class="name" x="50" y="61.5">Кантор</text>
+    </g>
+  </svg>
+
+  <div class="result" aria-live="polite">
+    <span class="idle" id="idle">Грань ещё не выпала</span>
+    <span class="val" id="val" hidden></span>
+    <span class="who" id="who" hidden></span>
+  </div>
+
+  <button class="roll" id="roll">Бросить кость</button>
+
+  <section class="tally">
+    <div class="tally-row"><span>I &nbsp; Судья</span><b id="c1">0</b></div>
+    <div class="tally-row"><span>II &nbsp; Вдова</span><b id="c2">0</b></div>
+    <div class="tally-row"><span>III &nbsp; Мясник</span><b id="c3">0</b></div>
+    <div class="tally-row"><span>IV &nbsp; Кантор</span><b id="c4">0</b></div>
+    <div class="tally-foot">
+      <span>Бросков: <b id="total">0</b></span>
+      <button id="reset">Сбросить счёт</button>
+    </div>
+  </section>
+</main>
+
+<script>
+  var NAMES = {1:"Судья", 2:"Вдова", 3:"Мясник", 4:"Кантор"};
+  var counts = {1:0, 2:0, 3:0, 4:0};
+  var total = 0;
+  var rolling = false;
+
+  var faces = {1:document.getElementById("f1"), 2:document.getElementById("f2"),
+               3:document.getElementById("f3"), 4:document.getElementById("f4")};
+  var rollBtn = document.getElementById("roll");
+  var idleEl = document.getElementById("idle");
+  var valEl = document.getElementById("val");
+  var whoEl = document.getElementById("who");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function clearFaces(){
+    for (var k in faces){ faces[k].classList.remove("lit", "locked"); }
+  }
+
+  function show(n){
+    idleEl.hidden = true;
+    valEl.hidden = false;
+    whoEl.hidden = false;
+    valEl.textContent = "1d4 = " + n;
+    whoEl.textContent = NAMES[n];
+    faces[n].classList.add("locked");
+    counts[n]++;
+    total++;
+    document.getElementById("c" + n).textContent = counts[n];
+    document.getElementById("total").textContent = total;
+  }
+
+  function roll(){
+    if (rolling) return;
+    rolling = true;
+    rollBtn.disabled = true;
+    clearFaces();
+    valEl.hidden = true;
+    whoEl.hidden = true;
+    idleEl.hidden = false;
+    idleEl.textContent = "Кость катится";
+
+    var n = Math.floor(Math.random() * 4) + 1;
+
+    if (reduced){
+      idleEl.hidden = true;
+      show(n);
+      rolling = false;
+      rollBtn.disabled = false;
+      return;
+    }
+
+    var step = 0;
+    var steps = 15;
+    function tick(){
+      clearFaces();
+      if (step < steps){
+        var f = (step % 4) + 1;
+        faces[f].classList.add("lit");
+        step++;
+        setTimeout(tick, 55 + step * step * 1.6);
+      } else {
+        idleEl.hidden = true;
+        show(n);
+        rolling = false;
+        rollBtn.disabled = false;
+      }
+    }
+    tick();
+  }
+
+  rollBtn.addEventListener("click", roll);
+  document.getElementById("reset").addEventListener("click", function(){
+    if (rolling) return;
+    counts = {1:0, 2:0, 3:0, 4:0};
+    total = 0;
+    for (var i = 1; i <= 4; i++){ document.getElementById("c" + i).textContent = "0"; }
+    document.getElementById("total").textContent = "0";
+    clearFaces();
+    valEl.hidden = true;
+    whoEl.hidden = true;
+    idleEl.hidden = false;
+    idleEl.textContent = "Грань ещё не выпала";
+  });
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 /* Офлайн-кеш «Бросок 1d4»: всё своё, ни одного внешнего запроса. */
 
-var CACHE_NAME = "d4-lichnost-v1";
+var CACHE_NAME = "d4-lichnost-v2";
 
 var PRECACHE = [
   "./",

@@ -7,6 +7,7 @@
   var counts = {1:0, 2:0, 3:0, 4:0};
   var total = 0;
   var last = null;
+  var streak = 0; // сколько раз подряд выпала грань last
   var rolling = false;
 
   var faces = {1:document.getElementById("f1"), 2:document.getElementById("f2"),
@@ -34,7 +35,7 @@
   function save(){
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        counts: counts, total: total, last: last
+        counts: counts, total: total, last: last, streak: streak
       }));
     } catch (e) { /* приватный режим или полная квота — просто не сохраняем */ }
   }
@@ -57,6 +58,8 @@
     var t = Number(data.total);
     total = (isFinite(t) && t >= 0) ? Math.floor(t) : sum;
     last = (data.last >= 1 && data.last <= 4) ? Math.floor(data.last) : null;
+    var st = Number(data.streak);
+    streak = (last != null && isFinite(st) && st >= 1) ? Math.floor(st) : (last != null ? 1 : 0);
   }
 
   function clearStore(){
@@ -93,6 +96,7 @@
   }
 
   function show(n){
+    streak = (n === last) ? streak + 1 : 1;
     last = n;
     counts[n]++;
     total++;
@@ -104,6 +108,24 @@
 
   /* ---- бросок ---------------------------------------------------------- */
 
+  // Вес повтора грани last. Остальные грани имеют вес 1.
+  // Вероятность повтора: после одного выпадения — 0.35 / 3.35 ≈ 10 %,
+  // после двух и более подряд — 0.08 / 3.08 ≈ 2.6 %. Честная кость — 25 %.
+  var REPEAT_WEIGHT_1 = 0.35;
+  var REPEAT_WEIGHT_2 = 0.08;
+
+  function pick(){
+    var w = {1:1, 2:1, 3:1, 4:1};
+    if (last != null) w[last] = streak >= 2 ? REPEAT_WEIGHT_2 : REPEAT_WEIGHT_1;
+    var sum = w[1] + w[2] + w[3] + w[4];
+    var r = Math.random() * sum;
+    for (var i = 1; i < 4; i++){
+      r -= w[i];
+      if (r < 0) return i;
+    }
+    return 4;
+  }
+
   function roll(){
     if (rolling) return;
     rolling = true;
@@ -114,7 +136,7 @@
     idleEl.hidden = false;
     idleEl.textContent = "Кость катится";
 
-    var n = Math.floor(Math.random() * 4) + 1;
+    var n = pick();
 
     if (reduced){
       idleEl.hidden = true;
@@ -158,6 +180,7 @@
     counts = {1:0, 2:0, 3:0, 4:0};
     total = 0;
     last = null;
+    streak = 0;
     paintTally();
     clearFaces();
     paintResult(null);
